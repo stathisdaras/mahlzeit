@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Meal Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#f0f2f5;color:#1a1a2e;padding:20px}
+  .header{text-align:center;padding:40px 20px 30px;background:linear-gradient(135deg,#2d3436,#636e72);color:#fff;border-radius:20px;margin-bottom:30px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+  .header h1{font-size:2.2rem;font-weight:700;margin-bottom:8px}
+  .header p{font-size:1rem;opacity:.85;font-weight:300}
+  .legend{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:28px}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:500}
+  .legend-dot{width:14px;height:14px;border-radius:50%;display:inline-block}
+  .stats{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:32px}
+  .stat-chip{background:#fff;padding:8px 18px;border-radius:50px;font-size:.82rem;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.06);color:#555}
+  .stat-chip strong{color:#1a1a2e}
+  .week-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;max-width:1400px;margin:0 auto}
+  .day-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06);transition:transform .2s}
+  .day-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+  .day-header{padding:16px 20px;font-size:1.1rem;font-weight:700;color:#fff;background:#2d3436;display:flex;justify-content:space-between;align-items:center}
+  .day-header .day-num{background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:500}
+  .meal-slot{padding:16px 20px;border-bottom:1px solid #f0f0f0}
+  .meal-slot:last-child{border-bottom:none}
+  .meal-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;color:#999;margin-bottom:8px}
+  .meal-title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .protein-badge{padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;color:#fff}
+  .carb-badge{padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:500;background:#e9ecef;color:#555}
+  .bg-chicken{background:#e17055}
+  .bg-beef{background:#d63031}
+  .bg-legumes{background:#00b894}
+  .dot-chicken{background:#e17055}
+  .dot-beef{background:#d63031}
+  .dot-legumes{background:#00b894}
+  .toggle-btn{margin-top:10px;background:none;border:1.5px solid #ddd;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:500;color:#666;transition:all .2s}
+  .toggle-btn:hover{border-color:#999;color:#333}
+  .recipe-list{display:none;margin-top:10px;padding:10px 0 0;border-top:1px dashed #eee}
+  .recipe-list.open{display:block}
+  .recipe-list ol{list-style:none;counter-reset:recipe;padding:0}
+  .recipe-list li{counter-increment:recipe;padding:5px 0;font-size:.82rem;line-height:1.5}
+  .recipe-list li::before{content:counter(recipe) ".";font-weight:600;color:#aaa;margin-right:6px;font-size:.75rem}
+  .recipe-list a{color:#0984e3;text-decoration:none;transition:color .2s}
+  .recipe-list a:hover{color:#074c8a;text-decoration:underline}
+  .footer{text-align:center;margin-top:40px;padding:20px;font-size:.8rem;color:#999}
+  @media(max-width:720px){.week-grid{grid-template-columns:1fr}.header h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Weekly Meal Plan</h1>
+  <p>14 meals &middot; High protein &amp; fiber &middot; Whole carbs focused</p>
+</div>
+
+<div class="legend">
+  <span class="legend-item"><span class="legend-dot dot-chicken"></span> Chicken (5 meals)</span>
+  <span class="legend-item"><span class="legend-dot dot-beef"></span> Beef (4 meals)</span>
+  <span class="legend-item"><span class="legend-dot dot-legumes"></span> Legumes (5 meals)</span>
+</div>
+
+<div class="stats">
+  <span class="stat-chip">Pasta: <strong>3 meals</strong></span>
+  <span class="stat-chip">Rice: <strong>3 meals</strong></span>
+  <span class="stat-chip">Potatoes / Whole Carbs: <strong>8 meals</strong></span>
+</div>
+
+<div class="week-grid">
+
+  <!-- MONDAY -->
+  <div class="day-card">
+    <div class="day-header">Monday <span class="day-num">Day 1</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-chicken">Chicken</span>
+        <span class="carb-badge">Potatoes</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/2555/kotopoylo-lemonato-me-patates" target="_blank">Greek lemon roast chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7561/kotopoulo-lemonato-me-patates-sto-thgani" target="_blank">One-pan Greek chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5678/kotopoylo-me-glykopatates-ston-foyrno" target="_blank">Roasted chicken with sweet potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5219/mpoytakia-kotopoyloy-me-patates-kai-saltsa-tsimitsoyri" target="_blank">Chimichurri chicken thighs with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5488/kotopoylo-me-patates-sth-chytra-tachythtas" target="_blank">Pressure-cooker chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8648/kotopoulo-petalouda-me-patates-sto-air-fryer" target="_blank">Air fryer butterflied chicken with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6989/kotopoulo-me-gemish-kai-patates" target="_blank">Roast chicken with rice stuffing and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7686/kotopoulo-lemonato-petalouda-me-patates-ston-fourno" target="_blank">Spatchcock roasted chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/9582/loaded-patates-fournou-me-gyro-kotopoulo" target="_blank">Loaded baked potatoes with chicken gyros</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8501/mpoutakia-kotopoulou-me-patates-baby" target="_blank">Oven-baked chicken thighs with baby potatoes</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-legumes">Lentils</span>
+        <span class="carb-badge">Potatoes / Bread</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/3120/fakes" target="_blank">Greek lentil soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6111/fakoryzo" target="_blank">Lentils and rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5721/fakes-me-spanaki-sto-thgani" target="_blank">Lentils with spinach</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5194/fakoryzo-me-karamelwmena-kremmydia" target="_blank">Lentils and rice with caramelized onions</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3146/fakes-me-kary-kai-lachanika" target="_blank">Lentil vegetable curry</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4749/kokkines-fakes-veloyte" target="_blank">Vegan red lentil soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5215/vegan-soypa-kokkinhs-fakhs" target="_blank">Vegan red lentil veloute</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6941/fakes-sth-xytra-taxythtas" target="_blank">Pressure cooker lentil soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6424/moysakas-me-kima-kokkinhs-fakhs" target="_blank">Vegan moussaka with red lentils</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5715/pita-apo-fakes" target="_blank">Lentil flatbread</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUESDAY -->
+  <div class="day-card">
+    <div class="day-header">Tuesday <span class="day-num">Day 2</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-beef">Beef</span>
+        <span class="carb-badge">Rice</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/4993/moscharisies-mprizoles-me-kitrino-ryzi" target="_blank">Beef steaks with yellow rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5464/thgania-me-kima-kai-ryzi" target="_blank">Ground beef and rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4046/gemista-me-kima" target="_blank">Greek stuffed vegetables with rice and ground meat</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/9399/mpiftekia-me-ryzi-ston-fourno" target="_blank">Burger patties with rice in the oven</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5144/gioyvarlakia-avgolemono" target="_blank">Greek meatball soup &ndash; Yuvarlakia</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6400/giouvarlakia-kokkinista" target="_blank">Greek meatballs and rice in tomato sauce</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/2152/gioyvarlakia-me-giaoyrti" target="_blank">Meatballs with rice in yogurt sauce</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7678/efkola-giouvarlakia-sth-chytra-tachythtas" target="_blank">Easy pressure-cooker meatball soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3447/lachanontolmades" target="_blank">Greek cabbage rolls</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5770/gemistes-piperies" target="_blank">Stuffed peppers</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-chicken">Chicken</span>
+        <span class="carb-badge">Pasta</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/6878/spaghetti-me-mprokolo-me-kotopoulo-ala-krem" target="_blank">Spaghetti with chicken &agrave; la cr&egrave;me</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8478/zymarika-me-kotopoulo-kai-feta-ston-fourno" target="_blank">Baked feta chicken pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6566/creamy-lemon-zimarika-me-kotopoulo-pane" target="_blank">Creamy lemon chicken pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6967/zymarika-ala-polita-me-kotopoulo" target="_blank">Greek-style chicken and vegetable pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7721/penes-me-kotopoulo-kai-tyri-cottage" target="_blank">Chicken penne with cottage cheese</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7990/rigatoni-alfredo-me-kotopoulo" target="_blank">Alfredo chicken rigatoni</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4438/healthy-penes-me-kotopoylo-high-protein" target="_blank">Healthy chicken penne (high protein)</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7478/soufle-me-kotopoulo-kai-penes" target="_blank">Chicken and penne souffl&eacute;</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3291/makaronada-light-me-kotopoylo-mprokolo" target="_blank">Light pasta with chicken and broccoli</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6319/skioufixta-me-kotopoulo-kokkinisto" target="_blank">Greek pasta with chicken in tomato sauce</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEDNESDAY -->
+  <div class="day-card">
+    <div class="day-header">Wednesday <span class="day-num">Day 3</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-legumes">Chickpeas</span>
+        <span class="carb-badge">Rice</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/4736/revithoryzo" target="_blank">Chickpeas with basmati rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4445/revithada" target="_blank">Greek chickpea stew</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7192/revithia-karbonara" target="_blank">Creamy chickpeas with mushrooms and bacon</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7754/revithia-chwris-mouliasma-sth-chytra-tachythtas" target="_blank">No-soak pressure cooker chickpeas</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4138/salata-me-revithia" target="_blank">Chickpea salad</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3718/pikantika-pshta-revithia" target="_blank">Spicy roasted chickpeas</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/133/revithia-ston-foyrno" target="_blank">Oven-baked chickpeas</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7327/tragana-revithia-ston-fourno" target="_blank">Crispy roasted chickpeas</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8615/revithada-me-chwriatiko-loukaniko" target="_blank">Greek chickpea stew with country sausage</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8971/revithia-frikase-me-manitaria" target="_blank">Chickpea fricassee with mushrooms</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-beef">Beef</span>
+        <span class="carb-badge">Potatoes</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/7371/moscharaki-me-patates-sth-chytra-tachythtas" target="_blank">Pressure cooker beef and potatoes stew</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5460/patates-me-kima-sto-thgani" target="_blank">Ground beef and potatoes skillet</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6352/mosxaraki-sti-xytra-me-glykopatates" target="_blank">Pressure-cooker beef stew with sweet potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8410/omeleta-me-kima-kai-patates" target="_blank">Ground beef and potato omelet</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8085/bbq-moscharisia-mpiftekia-me-patates-akornteon-hasselback" target="_blank">BBQ beef burgers with hasselback potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7526/mpiftekia-me-patates-sto-air-fryer" target="_blank">Air fryer burger patties with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/2159/mpiftekia-sto-foyrno-me-patates" target="_blank">Oven-baked Greek burgers and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5448/cottage-pie" target="_blank">Cottage pie</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4493/gemisto-rolo-kima-me-patates" target="_blank">Stuffed meatloaf with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3536/sunday-roast" target="_blank">Sunday roast</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- THURSDAY -->
+  <div class="day-card">
+    <div class="day-header">Thursday <span class="day-num">Day 4</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-chicken">Chicken</span>
+        <span class="carb-badge">Potatoes</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/7686/kotopoulo-lemonato-petalouda-me-patates-ston-fourno" target="_blank">Spatchcock roasted chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8501/mpoutakia-kotopoulou-me-patates-baby" target="_blank">Oven-baked chicken thighs with baby potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5488/kotopoylo-me-patates-sth-chytra-tachythtas" target="_blank">Pressure-cooker chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/2555/kotopoylo-lemonato-me-patates" target="_blank">Greek lemon roast chicken and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5219/mpoytakia-kotopoyloy-me-patates-kai-saltsa-tsimitsoyri" target="_blank">Chimichurri chicken thighs with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8648/kotopoulo-petalouda-me-patates-sto-air-fryer" target="_blank">Air fryer butterflied chicken with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6989/kotopoulo-me-gemish-kai-patates" target="_blank">Roast chicken with rice stuffing and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/9582/loaded-patates-fournou-me-gyro-kotopoulo" target="_blank">Loaded baked potatoes with chicken gyros</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5678/kotopoylo-me-glykopatates-ston-foyrno" target="_blank">Roasted chicken with sweet potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7561/kotopoulo-lemonato-me-patates-sto-thgani" target="_blank">One-pan Greek chicken and potatoes</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-legumes">Beans</span>
+        <span class="carb-badge">Potatoes / Bread</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/3442/gigantes-foyrnoy" target="_blank">Greek baked giant beans &ndash; Gigantes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5345/gigantes-thganhtoi-me-koyrkoyti" target="_blank">Pan-fried giant beans</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7311/eukola-kokkinista-fasolia-me-ryzi-ston-fourno" target="_blank">Easy baked pinto beans and rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6160/fasolakia-ogkraten" target="_blank">Green beans au gratin</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4005/fasolia-me-chorta" target="_blank">Beans and greens</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4554/gigantes-sth-chytra" target="_blank">Pressure-cooker giant beans</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7494/fasolakia-kokkinista-sth-chytra-tachythtas" target="_blank">Pressure cooker green beans in tomato sauce</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5529/english-breakfast-me-gigantes" target="_blank">English breakfast with giant beans</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5718/veloyte-soypa-me-fasolia" target="_blank">Velvety bean soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6477/fasolia-xadres-kokkinista-me-laxanika" target="_blank">Pinto bean stew with vegetables</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="day-card">
+    <div class="day-header">Friday <span class="day-num">Day 5</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-beef">Beef</span>
+        <span class="carb-badge">Pasta</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/8194/makaronia-me-kima" target="_blank">Greek spaghetti Bolognese (Makaronia me kima)</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7119/moscharaki-kokkinisto-me-lazanaki" target="_blank">Greek beef stew with pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4843/healthy-penes-me-moschari-mpreze-high-protein" target="_blank">Healthy penne with braised beef (high protein)</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6866/paradosiako-pastitsio" target="_blank">Classic Greek pasta bake &ndash; Pastitsio</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5895/zymarika-achivades-me-kima" target="_blank">Ground beef pasta shells</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5173/anioloti-gemista-me-moschari-kai-spanaki" target="_blank">Beef and spinach agnolotti</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4555/lazania-me-kima" target="_blank">Beef lasagna</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6133/creamy-steak-pasta" target="_blank">Creamy steak pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8905/makaronia-se-kima-se-ena-skevos" target="_blank">One-pot pasta Bolognese</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7624/efkola-makaronia-me-kima-sth-chytra-tachythtas" target="_blank">Pressure cooker spaghetti Bolognese</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-chicken">Chicken</span>
+        <span class="carb-badge">Rice</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/5127/kotopoylo-lemonato-me-ryzi-ston-foyrno" target="_blank">Lemony roast chicken and rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8473/kotopoulo-me-ryzi-kai-lachanika-ston-fourno" target="_blank">Oven-baked chicken and rice with vegetables</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3981/rizoto-me-kotopoylo" target="_blank">Chicken risotto</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6069/thganhto-ryzi-me-kotopoylo" target="_blank">Chicken fried rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/9026/kotopoulo-pilafi-ston-fourno" target="_blank">Oven-baked chicken with rice pilaf</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/9177/rizoto-me-kotopoylo-kai-manitaria" target="_blank">Chicken and mushroom risotto</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6010/pshto-sththos-kotopoyloy-me-ryzi-kai-lachanika" target="_blank">Baked chicken breast with rice and vegetables</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5926/kotopoylo-kari-me-ryzi-se-15-lepta" target="_blank">15-minute chicken curry with rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5612/kotopoylo-tandoori-me-ryzi" target="_blank">Tandoori chicken with rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/300/pilafi-me-kotopoylo-kai-lemoni" target="_blank">Lemon and chicken pilaf</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div class="day-card">
+    <div class="day-header">Saturday <span class="day-num">Day 6</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-legumes">Fava / Split Peas</span>
+        <span class="carb-badge">Potatoes</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/3214/h-fava-toy-akh" target="_blank">Traditional Greek fava (yellow split pea puree)</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4323/fava-me-karamelwmena-kremmydia" target="_blank">Greek fava with caramelized onions</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/2910/soypa-favas" target="_blank">Split pea soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7016/veloute-soupa-me-fava-kai-kastana" target="_blank">Yellow split pea and chestnut soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/2439/arakas-ala-krem" target="_blank">Mushy peas</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3196/arakas-kokkinistos" target="_blank">Greek tomato pea stew</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3120/fakes" target="_blank">Greek lentil soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6111/fakoryzo" target="_blank">Lentils and rice</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5717/ospriada" target="_blank">Greek mixed legume salad</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7821/ospriada-soupa" target="_blank">Greek mixed legume soup</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-beef">Beef</span>
+        <span class="carb-badge">Potatoes</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/5448/cottage-pie" target="_blank">Cottage pie</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3536/sunday-roast" target="_blank">Sunday roast</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7371/moscharaki-me-patates-sth-chytra-tachythtas" target="_blank">Pressure cooker beef and potatoes stew</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/9292/moscharaki-kokkinisto-me-patates-thganhtes" target="_blank">Beef stew with fried potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/2159/mpiftekia-sto-foyrno-me-patates" target="_blank">Oven-baked Greek burgers and potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4493/gemisto-rolo-kima-me-patates" target="_blank">Stuffed meatloaf with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5460/patates-me-kima-sto-thgani" target="_blank">Ground beef and potatoes skillet</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8085/bbq-moscharisia-mpiftekia-me-patates-akornteon-hasselback" target="_blank">BBQ beef burgers with hasselback potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7526/mpiftekia-me-patates-sto-air-fryer" target="_blank">Air fryer burger patties with potatoes</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6352/mosxaraki-sti-xytra-me-glykopatates" target="_blank">Pressure-cooker beef stew with sweet potatoes</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUNDAY -->
+  <div class="day-card">
+    <div class="day-header">Sunday <span class="day-num">Day 7</span></div>
+    <div class="meal-slot">
+      <div class="meal-label">Lunch</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-chicken">Chicken</span>
+        <span class="carb-badge">Pasta</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/6566/creamy-lemon-zimarika-me-kotopoulo-pane" target="_blank">Creamy lemon chicken pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/8478/zymarika-me-kotopoulo-kai-feta-ston-fourno" target="_blank">Baked feta chicken pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7990/rigatoni-alfredo-me-kotopoulo" target="_blank">Alfredo chicken rigatoni</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/4438/healthy-penes-me-kotopoylo-high-protein" target="_blank">Healthy chicken penne (high protein)</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6878/spaghetti-me-mprokolo-me-kotopoulo-ala-krem" target="_blank">Spaghetti with chicken &agrave; la cr&egrave;me</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6967/zymarika-ala-polita-me-kotopoulo" target="_blank">Greek-style chicken and vegetable pasta</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7721/penes-me-kotopoulo-kai-tyri-cottage" target="_blank">Chicken penne with cottage cheese</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7478/soufle-me-kotopoulo-kai-penes" target="_blank">Chicken and penne souffl&eacute;</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3291/makaronada-light-me-kotopoylo-mprokolo" target="_blank">Light pasta with chicken and broccoli</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6319/skioufixta-me-kotopoulo-kokkinisto" target="_blank">Greek pasta with chicken in tomato sauce</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-label">Dinner</div>
+      <div class="meal-title">
+        <span class="protein-badge bg-legumes">Mixed Legumes</span>
+        <span class="carb-badge">Potatoes / Bread</span>
+      </div>
+      <button class="toggle-btn" onclick="toggle(this)">Show 10 recipe options</button>
+      <div class="recipe-list">
+        <ol>
+          <li><a href="https://akispetretzikis.com/en/recipe/3098/fasolada" target="_blank">Greek white bean soup &ndash; Fasolada</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7060/fasolada-sth-chytra-tachythtas" target="_blank">Pressure cooker white bean soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/5717/ospriada" target="_blank">Greek mixed legume salad &ndash; Ospriada</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/7821/ospriada-soupa" target="_blank">Greek mixed legume soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6547/tacos-me-mauromatika-kai-pikantikh-salsa" target="_blank">Black-eyed pea and spicy salsa tacos</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/6175/mayromatika-me-chorta" target="_blank">Black-eyed peas with greens</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/903/soypa-kolokythas-me-kokkina-fasolia" target="_blank">Hearty pumpkin and red bean soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/1471/soypa-me-fasolia-kai-lapatha" target="_blank">Sorrel and kidney bean soup</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/136/fasolada-me-loykanika" target="_blank">Greek white bean soup with sausage</a></li>
+          <li><a href="https://akispetretzikis.com/en/recipe/3442/gigantes-foyrnoy" target="_blank">Greek baked giant beans &ndash; Gigantes</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  All recipes from <a href="https://akispetretzikis.com/en" target="_blank" style="color:#0984e3;">akispetretzikis.com</a> &middot; Click any recipe to open it
+</div>
+
+<script>
+function toggle(btn){
+  const list=btn.nextElementSibling;
+  list.classList.toggle('open');
+  btn.textContent=list.classList.contains('open')?'Hide recipe options':'Show 10 recipe options';
+}
+</script>
+</body>
+</html>
